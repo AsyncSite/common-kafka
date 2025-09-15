@@ -1,6 +1,6 @@
-package com.asyncsite.coreplatform.kafka.event.examples
+package com.asyncsite.kafka.event.examples
 
-import com.asyncsite.coreplatform.kafka.event.*
+import com.asyncsite.kafka.event.*
 import java.math.BigDecimal
 import java.time.Instant
 

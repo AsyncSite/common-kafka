@@ -1,4 +1,4 @@
-package com.asyncsite.coreplatform.kafka.correlation
+package com.asyncsite.kafka.correlation
 
 import mu.KotlinLogging
 import org.apache.kafka.clients.producer.ProducerInterceptor

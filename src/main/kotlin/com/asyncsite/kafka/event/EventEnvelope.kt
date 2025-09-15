@@ -1,4 +1,4 @@
-package com.asyncsite.coreplatform.kafka.event
+package com.asyncsite.kafka.event
 
 import java.time.Instant
 

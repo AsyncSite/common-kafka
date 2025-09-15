@@ -1,4 +1,4 @@
-package com.asyncsite.coreplatform.kafka.event
+package com.asyncsite.kafka.event
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

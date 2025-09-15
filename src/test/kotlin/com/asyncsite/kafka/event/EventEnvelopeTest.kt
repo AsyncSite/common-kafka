@@ -1,6 +1,6 @@
-package com.asyncsite.coreplatform.kafka.event
+package com.asyncsite.kafka.event
 
-import com.asyncsite.coreplatform.kafka.event.examples.UserRegisteredEvent
+import com.asyncsite.kafka.event.examples.UserRegisteredEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Instant

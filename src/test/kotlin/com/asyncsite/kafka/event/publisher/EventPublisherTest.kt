@@ -1,6 +1,6 @@
-package com.asyncsite.coreplatform.kafka.event.publisher
+package com.asyncsite.kafka.event.publisher
 
-import com.asyncsite.coreplatform.kafka.event.examples.UserRegisteredEvent
+import com.asyncsite.kafka.event.examples.UserRegisteredEvent
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach

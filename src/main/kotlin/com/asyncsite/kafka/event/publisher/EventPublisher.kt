@@ -1,8 +1,8 @@
-package com.asyncsite.coreplatform.kafka.event.publisher
+package com.asyncsite.kafka.event.publisher
 
-import com.asyncsite.coreplatform.kafka.event.BaseEvent
-import com.asyncsite.coreplatform.kafka.event.EventEnvelope
-import com.asyncsite.coreplatform.kafka.event.EventMetadata
+import com.asyncsite.kafka.event.BaseEvent
+import com.asyncsite.kafka.event.EventEnvelope
+import com.asyncsite.kafka.event.EventMetadata
 import mu.KotlinLogging
 import org.slf4j.MDC
 import org.apache.kafka.clients.producer.ProducerRecord

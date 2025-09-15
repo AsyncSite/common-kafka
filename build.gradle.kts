@@ -8,7 +8,7 @@ plugins {
     `maven-publish`
 }
 
-group = "com.asyncsite.coreplatform"
+group = "com.asyncsite"
 version = "1.0.0-SNAPSHOT"
 
 java {
@@ -73,7 +73,7 @@ val sourcesJar by tasks.creating(Jar::class) {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.asyncsite.coreplatform"
+            groupId = "com.asyncsite"
             artifactId = "common-kafka"
             version = "1.0.0-SNAPSHOT"
 

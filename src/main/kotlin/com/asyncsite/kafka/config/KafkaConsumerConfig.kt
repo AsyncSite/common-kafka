@@ -1,6 +1,6 @@
-package com.asyncsite.coreplatform.kafka.config
+package com.asyncsite.kafka.config
 
-import com.asyncsite.coreplatform.kafka.correlation.KafkaCorrelationIdConsumerInterceptor
+import com.asyncsite.kafka.correlation.KafkaCorrelationIdConsumerInterceptor
 import mu.KotlinLogging
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer

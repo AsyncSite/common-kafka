@@ -1,4 +1,4 @@
-package com.asyncsite.coreplatform.kafka.event
+package com.asyncsite.kafka.event
 
 /**
  * Interface for events that carry correlation ID for request tracing.

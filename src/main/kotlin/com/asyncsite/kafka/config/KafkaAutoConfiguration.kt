@@ -1,4 +1,4 @@
-package com.asyncsite.coreplatform.kafka.config
+package com.asyncsite.kafka.config
 
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.AutoConfiguration
