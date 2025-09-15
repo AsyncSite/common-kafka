@@ -1,0 +1,51 @@
+# Kafka default configuration for AsyncSite platform
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    
+    producer:
+      acks: all
+      retries: 3
+      batch-size: 16384
+      linger-ms: 10
+      buffer-memory: 33554432
+      compression-type: snappy
+      enable-idempotence: false
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        max.in.flight.requests.per.connection: 5
+        request.timeout.ms: 30000
+        delivery.timeout.ms: 120000
+    
+    consumer:
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 500
+      session-timeout-ms: 30000
+      heartbeat-interval-ms: 3000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.asyncsite.*"
+        max.poll.interval.ms: 300000
+        fetch.min.bytes: 1024
+        fetch.max.wait.ms: 500
+    
+    listener:
+      ack-mode: manual_immediate
+      concurrency: 3
+      poll-timeout: 3000
+      type: single
+      
+# AsyncSite specific Kafka settings
+asyncsite:
+  kafka:
+    enabled: true
+    topics:
+      user-events: asyncsite.user.events
+      study-events: asyncsite.study.events
+      notification-events: asyncsite.notification.events
+      payment-events: asyncsite.payment.events
+      ai-events: asyncsite.ai.events
+      asset-events: asyncsite.asset.events
