@@ -80,8 +80,8 @@ class KafkaProducerConfig {
         
         // JSON serializer settings
         configs[JsonSerializer.ADD_TYPE_INFO_HEADERS] = false
-        configs[JsonSerializer.TYPE_MAPPINGS] = 
-            "event:com.asyncsite.coreplatform.kafka.event.BaseEvent"
+        configs[JsonSerializer.TYPE_MAPPINGS] =
+            "event:com.asyncsite.kafka.event.BaseEvent"
         
         log.info { 
             "Configuring Kafka producer - Bootstrap servers: $bootstrapServers, " +
