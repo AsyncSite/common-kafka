@@ -1,9 +1,6 @@
 package com.asyncsite.kafka.config
 
 import com.asyncsite.kafka.correlation.KafkaCorrelationIdProducerInterceptor
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import mu.KotlinLogging
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
@@ -49,61 +46,49 @@ class KafkaProducerConfig {
     private var enableIdempotence: Boolean = false
     
     /**
-     * Creates ObjectMapper configured for Kafka serialization.
-     * - JavaTimeModule: Instant, LocalDateTime 등 Java 8 날짜/시간 타입 지원
-     * - WRITE_DATES_AS_TIMESTAMPS = false: ISO-8601 형식으로 직렬화 (숫자 대신)
-     */
-    private fun createKafkaObjectMapper(): ObjectMapper {
-        return ObjectMapper().apply {
-            registerModule(JavaTimeModule())
-            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        }
-    }
-
-    /**
      * Creates the producer factory with all configurations.
      */
     @Bean
     fun producerFactory(): ProducerFactory<String, Any> {
         val configs = mutableMapOf<String, Any>()
-
+        
         // Connection settings
         configs[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
-
-        // Serialization - key serializer만 설정 (value serializer는 별도로 설정)
+        
+        // Serialization
         configs[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
-
+        configs[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
+        
         // Reliability settings
         configs[ProducerConfig.ACKS_CONFIG] = acks
         configs[ProducerConfig.RETRIES_CONFIG] = retries
         configs[ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG] = enableIdempotence
-
+        
         // Performance settings
         configs[ProducerConfig.BATCH_SIZE_CONFIG] = batchSize
         configs[ProducerConfig.LINGER_MS_CONFIG] = lingerMs
         configs[ProducerConfig.BUFFER_MEMORY_CONFIG] = bufferMemory
         configs[ProducerConfig.COMPRESSION_TYPE_CONFIG] = compressionType
-
+        
         // Interceptor for correlation ID
-        configs[ProducerConfig.INTERCEPTOR_CLASSES_CONFIG] =
+        configs[ProducerConfig.INTERCEPTOR_CLASSES_CONFIG] = 
             KafkaCorrelationIdProducerInterceptor::class.java.name
-
+        
         // Timeout settings
         configs[ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG] = 30000
         configs[ProducerConfig.MAX_BLOCK_MS_CONFIG] = 60000
-
-        log.info {
+        
+        // JSON serializer settings
+        configs[JsonSerializer.ADD_TYPE_INFO_HEADERS] = false
+        configs[JsonSerializer.TYPE_MAPPINGS] =
+            "event:com.asyncsite.kafka.event.BaseEvent"
+        
+        log.info { 
             "Configuring Kafka producer - Bootstrap servers: $bootstrapServers, " +
-            "Acks: $acks, Compression: $compressionType, Idempotence: $enableIdempotence"
+            "Acks: $acks, Compression: $compressionType, Idempotence: $enableIdempotence" 
         }
-
-        // Create JsonSerializer with custom ObjectMapper for proper date/time serialization
-        val jsonSerializer = JsonSerializer<Any>(createKafkaObjectMapper()).apply {
-            // Disable type info headers for microservices independence
-            setAddTypeInfo(false)
-        }
-
-        return DefaultKafkaProducerFactory(configs, StringSerializer(), jsonSerializer)
+        
+        return DefaultKafkaProducerFactory(configs)
     }
     
     /**
