@@ -4,8 +4,12 @@ import java.io.Serializable;
 
 /**
  * Error event DTO for cross-service error notification via Kafka.
- * Published by services when unhandled 500 errors occur.
- * Consumed by noti-service to send Discord alerts.
+ * Published by services via two sources:
+ * <ul>
+ *   <li>GlobalExceptionHandler: catches HTTP 500 errors (has requestPath/httpStatus)</li>
+ *   <li>KafkaErrorLogAppender: catches ALL log.error() calls (has loggerName/threadName)</li>
+ * </ul>
+ * Consumed by noti-service ErrorEventListener to send Discord alerts.
  *
  * <p>This is a plain Java POJO (no Lombok, no Kotlin dependencies)
  * so it can be used by any service regardless of their dependency setup.
@@ -26,6 +30,10 @@ public class ErrorEvent implements Serializable {
     private String requestMethod;
     private int httpStatus;
     private String timestamp;
+    // New fields for log-sourced errors (from KafkaErrorLogAppender)
+    private String loggerName;
+    private String threadName;
+    private String source; // "global-exception-handler" or "logback-appender"
 
     public ErrorEvent() {
     }
@@ -39,6 +47,9 @@ public class ErrorEvent implements Serializable {
         this.requestMethod = builder.requestMethod;
         this.httpStatus = builder.httpStatus;
         this.timestamp = builder.timestamp;
+        this.loggerName = builder.loggerName;
+        this.threadName = builder.threadName;
+        this.source = builder.source;
     }
 
     public static Builder builder() {
@@ -79,6 +90,26 @@ public class ErrorEvent implements Serializable {
         return timestamp;
     }
 
+    public String getLoggerName() {
+        return loggerName;
+    }
+
+    public String getThreadName() {
+        return threadName;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * Returns true if this error was captured from a log.error() call via KafkaErrorLogAppender
+     * rather than from GlobalExceptionHandler.
+     */
+    public boolean isLogSourced() {
+        return "logback-appender".equals(source);
+    }
+
     // Setters (needed for Jackson deserialization)
 
     public void setService(String service) {
@@ -111,6 +142,18 @@ public class ErrorEvent implements Serializable {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public void setLoggerName(String loggerName) {
+        this.loggerName = loggerName;
+    }
+
+    public void setThreadName(String threadName) {
+        this.threadName = threadName;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     @Override
@@ -155,6 +198,9 @@ public class ErrorEvent implements Serializable {
         private String requestMethod;
         private int httpStatus;
         private String timestamp;
+        private String loggerName;
+        private String threadName;
+        private String source;
 
         public Builder service(String service) {
             this.service = service;
@@ -193,6 +239,21 @@ public class ErrorEvent implements Serializable {
 
         public Builder timestamp(String timestamp) {
             this.timestamp = timestamp;
+            return this;
+        }
+
+        public Builder loggerName(String loggerName) {
+            this.loggerName = loggerName;
+            return this;
+        }
+
+        public Builder threadName(String threadName) {
+            this.threadName = threadName;
+            return this;
+        }
+
+        public Builder source(String source) {
+            this.source = source;
             return this;
         }
 
